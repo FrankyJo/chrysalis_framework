@@ -48,20 +48,42 @@ Separately, at the end of phase 7, `.claude/chrysalis/docs/<component-slug>.md` 
 
 | # | Skill | What it does | Output |
 |---|------|-----------|-----------|
-| 1 | `chrysalis-01-project-analyzer` | Scans the whole project, identifies the framework, finds bloated/tangled components | `PROJECT_INVENTORY.md`, `REFACTOR_PLAN.md` (in project root) |
-| 2 | `chrysalis-02-component-analyzer` | Deep analysis of ONE chosen component | `.claude/chrysalis/changes/<slug>/ANALYSIS.md` |
-| 3 | `chrysalis-03-test-baseline` | Writes characterization tests for current behavior | test files (next to the component), `.claude/chrysalis/changes/<slug>/TEST_BASELINE.md` |
-| 4 | `chrysalis-04-visual-baseline` | Checks/offers to install Playwright MCP, captures screenshots of all states BEFORE changes | `.claude/chrysalis/changes/<slug>/visual-baseline/*.png` or `VISUAL_BASELINE_SKIPPED.md` |
-| 5 | `chrysalis-05-execute` | The actual refactor, following framework best practices | changed component code (in place), `.claude/chrysalis/changes/<slug>/CHANGES.md` |
-| 6 | `chrysalis-06-verify` | Full test run + (if available) before/after Playwright diff | `.claude/chrysalis/changes/<slug>/VERIFY_REPORT.md` |
-| 7 | `chrysalis-07-report` | Summary for the human + manual-test checklist + next component | `.claude/chrysalis/changes/<slug>/FINAL_REPORT.md`, `.claude/chrysalis/docs/<slug>.md` |
+| 1 | `ch-project-analyzer` | Scans the whole project, identifies the framework, finds bloated/tangled components | `PROJECT_INVENTORY.md`, `REFACTOR_PLAN.md` (in project root) |
+| 2 | `ch-component-analyzer` | Deep analysis of ONE chosen component | `.claude/chrysalis/changes/<slug>/ANALYSIS.md` |
+| 3 | `ch-test-baseline` | Writes characterization tests for current behavior | test files (next to the component), `.claude/chrysalis/changes/<slug>/TEST_BASELINE.md` |
+| 4 | `ch-visual-baseline` | Checks/offers to install Playwright MCP, captures screenshots of all states BEFORE changes | `.claude/chrysalis/changes/<slug>/visual-baseline/*.png` or `VISUAL_BASELINE_SKIPPED.md` |
+| 5 | `ch-execute` | The actual refactor, following framework best practices | changed component code (in place), `.claude/chrysalis/changes/<slug>/CHANGES.md` |
+| 6 | `ch-verify` | Full test run + (if available) before/after Playwright diff | `.claude/chrysalis/changes/<slug>/VERIFY_REPORT.md` |
+| 7 | `ch-report` | Summary for the human + manual-test checklist + next component | `.claude/chrysalis/changes/<slug>/FINAL_REPORT.md`, `.claude/chrysalis/docs/<slug>.md` |
 
 ## How to run it
 
-Just ask Claude Code for a specific phase, for example:
+Each skill is also a slash command, named after its folder. Run it directly, or just describe what you want in plain English:
 
-> "Run chrysalis-01-project-analyzer on this project"
+```
+/ch-project-analyzer
+/ch-component-analyzer ReportForm.vue
+/ch-test-baseline
+/ch-visual-baseline
+/ch-execute
+/ch-verify
+/ch-report
+```
 
-> "Run chrysalis-02-component-analyzer on UserProfileCard.vue"
+Only `/ch-component-analyzer` needs an argument (the component to analyze — a filename or path). Every phase after it (`ch-test-baseline` through `ch-report`) picks up the "current component" automatically, so you don't have to repeat the name each time — see below. Each skill tells you when it's done and what to run next; you decide whether to move on or stop and take a look yourself.
 
-Each skill will tell you when it's done and what to do next — you decide whether to move on or stop and take a look yourself.
+## Remembering which component you're on
+
+`ch-component-analyzer` writes `.claude/chrysalis/state.json`, recording the component slug, its file path, and which phase was last completed. Every later phase reads that file when you invoke it without an argument, so once you run:
+
+```
+/ch-component-analyzer ReportForm.vue
+```
+
+...the skill's closing message will point you to the next command (e.g. `ch-test-baseline`), and you can just run it bare:
+
+```
+/ch-test-baseline
+```
+
+...and it'll know you mean `report-form`, confirming that in its first line so a mix-up is caught immediately. You can still pass an explicit component argument to any phase to override this and work on a different component's cycle. Once `ch-report` closes out a component, it clears the state file, so the next bare invocation of `ch-component-analyzer` starts a clean cycle.

@@ -1,11 +1,18 @@
 ---
-name: chrysalis-06-verify
-description: Phase 6 of Chrysalis. Runs the full test suite and, if Playwright MCP is available, a before/after visual screenshot diff to confirm a just-refactored component still behaves and looks the same. Use after chrysalis-05-execute completes, when the user says "verify nothing broke", "run tests and compare screenshots", or continues Chrysalis pipeline into the verify phase. This is the automated regression gate before the final human report.
+name: ch-verify
+description: Phase 6 of Chrysalis. Runs the full test suite and, if Playwright MCP is available, a before/after visual screenshot diff to confirm a just-refactored component still behaves and looks the same. Use after ch-execute completes, when the user says "verify nothing broke", "run tests and compare screenshots", or continues Chrysalis pipeline into the verify phase. This is the automated regression gate before the final human report.
 ---
 
 # Phase 6: Verify
 
 You are executing the SIXTH phase — an automated check that the refactor (phase 5) didn't break the component's behavior or appearance. This is a gate before the final report to the human (phase 7) — not a final "everything's fine" confirmation, but a signal for "is it worth going to the human now, or should something be fixed first".
+
+## Which component this runs on
+
+- If invoked with an argument (a filename/path), use that component, overriding the session state below.
+- Otherwise, read `.claude/chrysalis/state.json` and use its `current_component` / `current_component_path`. If the file doesn't exist or has no `current_component`, stop and tell the user to run `ch-component-analyzer <component>` first.
+- State which component you're operating on before doing anything else.
+- When this phase finishes, update `.claude/chrysalis/state.json`: set `last_phase_completed` to `6` (only if the verdict is PASS or WARN — see below).
 
 ## Step 1. Full test run
 
@@ -23,7 +30,7 @@ Run `scripts/check_playwright.sh`.
 ## Step 3. Determine the verdict
 
 - **PASS** — all tests pass, the visual diff (if any) shows no significant differences → ready for human review.
-- **FAIL (tests)** — some tests failed → do NOT move to phase 7. Describe specifically what failed and the likely cause, recommend returning to `chrysalis-05-execute` to fix it, or, if the problem runs deeper, consider rolling back (git revert / checkpoint) this component.
+- **FAIL (tests)** — some tests failed → do NOT move to phase 7. Describe specifically what failed and the likely cause, recommend returning to `ch-execute` to fix it, or, if the problem runs deeper, consider rolling back (git revert / checkpoint) this component.
 - **FAIL (visual)** — tests pass but there's a structural visual difference → same as above, return to phase 5, describing which part of the markup changed.
 - **WARN (no visual check)** — tests pass, visuals weren't checked automatically → it's fine to move to phase 7, but with an explicit warning.
 
@@ -48,6 +55,6 @@ PASS / FAIL / WARN + reasoning
 
 State the verdict and the main reason. If PASS or WARN:
 
-> "Verification passed [with a warning about the missing visual diff, if applicable]. Ready to put together the final report via `chrysalis-07-report` whenever you say so."
+> "Verification passed [with a warning about the missing visual diff, if applicable]. Ready to put together the final report via `ch-report` whenever you say so — it'll pick up this component automatically."
 
-If FAIL — clearly state that the next step is returning to `chrysalis-05-execute`, and don't suggest moving to phase 7 until it's PASS/WARN.
+If FAIL — clearly state that the next step is returning to `ch-execute`, and don't suggest moving to phase 7 until it's PASS/WARN.

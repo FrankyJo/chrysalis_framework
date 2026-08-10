@@ -1,5 +1,5 @@
 ---
-name: chrysalis-01-project-analyzer
+name: ch-project-analyzer
 description: Phase 1 of Chrysalis. Scans an entire Vue/React/Angular frontend project to find bloated, tangled-logic components and produces a prioritized refactoring plan. Use this whenever the user wants to start a refactoring initiative, asks "which components should I refactor first", "analyze my project for refactoring", "find bloated components", "build a refactoring plan", or mentions starting Chrysalis from phase 1 / project analysis. This is always the first phase — run it before any component-level work.
 ---
 
@@ -55,6 +55,6 @@ If the project already has a `CLAUDE.md`, briefly compare its contents with what
 
 After creating both files — **stop**. Give a short summary (3-5 sentences): how many components were analyzed, how many are top-priority candidates, which one is the first recommended component. Ask whether the human agrees with the order, and suggest the next step:
 
-> "Ready to start with `chrysalis-02-component-analyzer` for [component name] whenever you say so."
+> "Ready to start with `ch-component-analyzer` for [component name] whenever you say so."
 
 Do not start the next phase yourself.

@@ -1,11 +1,17 @@
 ---
-name: chrysalis-07-report
-description: Phase 7 (final) of Chrysalis. Produces the final human-readable report for a refactored component — summary of changes, automated test/visual results, a tailored manual-test checklist, and the next recommended component. Use after chrysalis-06-verify has returned PASS or WARN, when the user says "summarize what was done", "give me the final report", or continues Chrysalis pipeline to close out a component. This is the final human decision gate — never treat automated PASS as equivalent to human sign-off.
+name: ch-report
+description: Phase 7 (final) of Chrysalis. Produces the final human-readable report for a refactored component — summary of changes, automated test/visual results, a tailored manual-test checklist, and the next recommended component. Use after ch-verify has returned PASS or WARN, when the user says "summarize what was done", "give me the final report", or continues Chrysalis pipeline to close out a component. This is the final human decision gate — never treat automated PASS as equivalent to human sign-off.
 ---
 
 # Phase 7: Final Report
 
 You are executing the LAST phase for this component — pulling everything together into one clear report for the human who makes the final merge decision.
+
+## Which component this runs on
+
+- If invoked with an argument (a filename/path), use that component, overriding the session state below.
+- Otherwise, read `.claude/chrysalis/state.json` and use its `current_component` / `current_component_path`. If the file doesn't exist or has no `current_component`, stop and tell the user to run `ch-component-analyzer <component>` first.
+- State which component you're operating on before doing anything else.
 
 ## Why this matters
 
@@ -79,4 +85,8 @@ If the project root has a `CLAUDE.md` and it doesn't yet have a rule about autom
 
 Present the report in the chat (not just the file) and clearly state that this is not an automatic approval — the merge decision is the human's. Ask:
 
-> "This wraps up the refactor for this component. Move straight to the next one (`chrysalis-01-project-analyzer` already pointed to [next component] — start with `chrysalis-02-component-analyzer`), or stop here for manual review?"
+> "This wraps up the refactor for `<component-slug>`. Move straight to the next one (`ch-project-analyzer` already pointed to [next component] — run `ch-component-analyzer <next component>`), or stop here for manual review?"
+
+## Clear the session state
+
+Once the human confirms this component's cycle is done (whether they move to the next component or just stop here), update `.claude/chrysalis/state.json`: set `current_component` and `current_component_path` to `null`, and `last_phase_completed` to `7`. This prevents a later phase invoked without an argument from silently continuing to work on this already-finished component instead of a new one. If the human immediately names the next component (in the same message that confirms this one is done), skip the clear and let `ch-component-analyzer` overwrite the state directly when it runs.

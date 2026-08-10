@@ -1,11 +1,18 @@
 ---
-name: chrysalis-05-execute
-description: Phase 5 of Chrysalis. Executes the actual refactor of a component's internal structure following framework-specific best practices (Vue composables, React hooks, Angular services), without changing its public API. Use only after chrysalis-04-visual-baseline has completed for the target component (or was explicitly skipped), when the user says "now refactor this component", "let's do the actual changes", or continues Chrysalis pipeline into the execute phase. Do not use this to make arbitrary code changes unrelated to the pipeline — it assumes ANALYSIS.md and a test baseline already exist for the component.
+name: ch-execute
+description: Phase 5 of Chrysalis. Executes the actual refactor of a component's internal structure following framework-specific best practices (Vue composables, React hooks, Angular services), without changing its public API. Use only after ch-visual-baseline has completed for the target component (or was explicitly skipped), when the user says "now refactor this component", "let's do the actual changes", or continues Chrysalis pipeline into the execute phase. Do not use this to make arbitrary code changes unrelated to the pipeline — it assumes ANALYSIS.md and a test baseline already exist for the component.
 ---
 
 # Phase 5: Execute Refactor
 
 You are executing the FIFTH phase — the actual code refactor. This is the only phase where you actually change the component's files.
+
+## Which component this runs on
+
+- If invoked with an argument (a filename/path), use that component, overriding the session state below.
+- Otherwise, read `.claude/chrysalis/state.json` and use its `current_component` / `current_component_path`. If the file doesn't exist or has no `current_component`, stop and tell the user to run `ch-component-analyzer <component>` first.
+- State which component you're operating on before doing anything else.
+- When this phase finishes, update `.claude/chrysalis/state.json`: set `last_phase_completed` to `5`.
 
 ## Before you start
 
@@ -36,6 +43,6 @@ Changed component code (in place, in the normal project structure) + a short `.c
 
 Give a summary of the changes and the result of the test run (self-check). Ask for confirmation to continue:
 
-> "The refactor is done, the quick tests pass. Ready for final verification via `chrysalis-06-verify` (full test run + visual diff) whenever you say so."
+> "The refactor is done, the quick tests pass. Ready for final verification via `ch-verify` (full test run + visual diff) whenever you say so — it'll pick up this component automatically."
 
 Do not start the next phase yourself.

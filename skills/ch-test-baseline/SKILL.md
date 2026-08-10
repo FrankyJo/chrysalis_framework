@@ -1,11 +1,18 @@
 ---
-name: chrysalis-03-test-baseline
-description: Phase 3 of Chrysalis. Writes characterization tests that lock in a component's CURRENT behavior before it gets refactored, so any later regression is caught automatically. Use after chrysalis-02-component-analyzer has produced an ANALYSIS.md for a component, when the user says "write tests before refactoring", "cover this component with tests", or continues Chrysalis pipeline into the test-baseline phase. Do not use this for general "write tests for my app" requests unrelated to the refactor pipeline — use only when a component has already been through phase 2 analysis.
+name: ch-test-baseline
+description: Phase 3 of Chrysalis. Writes characterization tests that lock in a component's CURRENT behavior before it gets refactored, so any later regression is caught automatically. Use after ch-component-analyzer has produced an ANALYSIS.md for a component, when the user says "write tests before refactoring", "cover this component with tests", or continues Chrysalis pipeline into the test-baseline phase. Do not use this for general "write tests for my app" requests unrelated to the refactor pipeline — use only when a component has already been through phase 2 analysis.
 ---
 
 # Phase 3: Test Baseline
 
 You are executing the THIRD phase — locking in the component's CURRENT behavior with tests, BEFORE anyone changes it. These are characterization tests: they describe "what the component does now", not "what it should ideally do". The goal is a safety net, not a test refactor.
+
+## Which component this runs on
+
+- If invoked with an argument (a filename/path), use that component — this lets the human jump to a different component's cycle explicitly, overriding the session state below.
+- Otherwise, read `.claude/chrysalis/state.json` and use its `current_component` / `current_component_path`. If the file doesn't exist or has no `current_component`, stop and tell the user to run `ch-component-analyzer <component>` first — don't guess which component they mean.
+- State which component you're operating on before doing anything else (e.g. "Continuing with `report-form` (src/components/ReportForm.vue)."), so a mismatch is caught immediately.
+- When this phase finishes, update `.claude/chrysalis/state.json`: set `last_phase_completed` to `3` (keep `current_component`/`current_component_path` as resolved above).
 
 ## Why this matters
 
@@ -42,6 +49,6 @@ X/X tests pass on the current (pre-refactor) code.
 
 Give a summary: how many tests were written, whether everything passes, what's left uncovered. Ask for confirmation:
 
-> "Tests have locked in the current behavior. Ready to move to `chrysalis-04-visual-baseline` (screenshots of the states) whenever you say so."
+> "Tests have locked in the current behavior. Ready to move to `ch-visual-baseline` (screenshots of the states) whenever you say so — it'll pick up this component automatically."
 
 Do not start the next phase yourself.

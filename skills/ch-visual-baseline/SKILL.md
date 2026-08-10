@@ -1,11 +1,18 @@
 ---
-name: chrysalis-04-visual-baseline
-description: Phase 4 of Chrysalis. Detects whether the Playwright MCP server is available, offers to install it if missing, and captures baseline screenshots of every visual state of a component BEFORE refactoring so a later visual diff can catch UI regressions. Use after chrysalis-03-test-baseline completes, when the user says "take screenshots before refactoring", "set up Playwright", "capture the component's visual state", or continues Chrysalis pipeline. Also use this skill any time the user asks whether Playwright MCP is installed or wants to set it up, even outside the refactor pipeline.
+name: ch-visual-baseline
+description: Phase 4 of Chrysalis. Detects whether the Playwright MCP server is available, offers to install it if missing, and captures baseline screenshots of every visual state of a component BEFORE refactoring so a later visual diff can catch UI regressions. Use after ch-test-baseline completes, when the user says "take screenshots before refactoring", "set up Playwright", "capture the component's visual state", or continues Chrysalis pipeline. Also use this skill any time the user asks whether Playwright MCP is installed or wants to set it up, even outside the refactor pipeline.
 ---
 
 # Phase 4: Visual Baseline (+ Playwright MCP setup)
 
 You are executing the FOURTH phase — capturing screenshots of ALL of the component's states BEFORE the refactor, so that later (phase 6) a "before/after" comparison can catch visual regressions that unit tests can't see.
+
+## Which component this runs on
+
+- If invoked with an argument (a filename/path), use that component, overriding the session state below.
+- Otherwise, read `.claude/chrysalis/state.json` and use its `current_component` / `current_component_path`. If the file doesn't exist or has no `current_component`, stop and tell the user to run `ch-component-analyzer <component>` first.
+- State which component you're operating on before doing anything else.
+- When this phase finishes (including if the visual check is skipped), update `.claude/chrysalis/state.json`: set `last_phase_completed` to `4`.
 
 ## Step 1. Check whether Playwright MCP is connected
 
@@ -56,6 +63,6 @@ For each identified state: open/set up the needed state in the browser via Playw
 
 Give a summary: how many states were captured (or why it was skipped, with a clear reminder of the risk). Ask for confirmation to continue:
 
-> "The visual baseline is ready (or: skipped — see the warning above). Ready to start the actual refactor via `chrysalis-05-execute` whenever you say so."
+> "The visual baseline is ready (or: skipped — see the warning above). Ready to start the actual refactor via `ch-execute` whenever you say so — it'll pick up this component automatically."
 
 Do not start the next phase yourself.

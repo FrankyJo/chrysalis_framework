@@ -1,11 +1,30 @@
 ---
-name: chrysalis-02-component-analyzer
-description: Phase 2 of Chrysalis. Performs a deep, single-component analysis (Vue/React/Angular) before any refactoring starts — responsibilities, dependencies, state, edge cases, existing test gaps. Use when the user names a specific component/file to refactor next, says "analyze this component", "break down [file] in detail before refactoring", or continues Chrysalis after phase 1 (project-analyzer) by picking a target component. Requires that a specific component has already been chosen — if the user hasn't picked one yet, point them to chrysalis-01-project-analyzer first.
+name: ch-component-analyzer
+description: Phase 2 of Chrysalis. Performs a deep, single-component analysis (Vue/React/Angular) before any refactoring starts — responsibilities, dependencies, state, edge cases, existing test gaps. Use when the user names a specific component/file to refactor next, says "analyze this component", "break down [file] in detail before refactoring", or continues Chrysalis after phase 1 (project-analyzer) by picking a target component. Requires that a specific component has already been chosen — if the user hasn't picked one yet, point them to ch-project-analyzer first.
 ---
 
 # Phase 2: Component Analyzer
 
-You are executing the SECOND phase of Chrysalis — a deep analysis of ONE specific component chosen by the human (or picked from `REFACTOR_PLAN.md` if they just say "next"). **Do not edit any code file.**
+You are executing the SECOND phase of Chrysalis — a deep analysis of ONE specific component chosen by the human. **Do not edit any code file.**
+
+## Determine the target component
+
+- If you were invoked with an argument (a filename or path — e.g. `ReportForm.vue` or `src/components/ReportForm.vue`), that's the target. If it's a bare filename, search the project for a matching component file; if more than one file matches, list them and ask the user which one.
+- If you were invoked with no argument, use the top entry from `REFACTOR_PLAN.md` (phase 1 output) if it exists, and say explicitly that you're using it — don't silently guess if there's no `REFACTOR_PLAN.md` and no argument; ask the user instead.
+- Compute `<component-slug>`: kebab-case of the component's base filename, without extension (e.g. `ReportForm.vue` → `report-form`).
+
+As soon as the target is confirmed, write `.claude/chrysalis/state.json` (create the file if it doesn't exist, overwrite if it does):
+
+```json
+{
+  "current_component": "<component-slug>",
+  "current_component_path": "<path/to/Component.vue>",
+  "last_phase_completed": 2,
+  "updated": "<today's date>"
+}
+```
+
+This is what lets the later phases (`ch-test-baseline`, `ch-visual-baseline`, `ch-execute`, `ch-verify`, `ch-report`) know which component to continue with when the human invokes them without repeating the component name.
 
 ## Why this matters
 
@@ -59,6 +78,6 @@ Briefly: which pieces of logic to extract into composables/hooks/services first,
 
 Give a short summary (the riskiest areas, the main recommendation) and ask for confirmation to continue:
 
-> "Ready to write characterization tests for this component via `chrysalis-03-test-baseline` whenever you say so."
+> "Ready to write characterization tests for `<component-slug>` via `ch-test-baseline` whenever you say so — it'll pick up this component automatically."
 
 Do not start the next phase yourself.
