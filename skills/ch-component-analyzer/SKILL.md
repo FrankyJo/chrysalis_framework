@@ -12,6 +12,7 @@ You are executing the SECOND phase of Chrysalis — a deep analysis of ONE speci
 - If you were invoked with an argument (a filename or path — e.g. `ReportForm.vue` or `src/components/ReportForm.vue`), that's the target. If it's a bare filename, search the project for a matching component file; if more than one file matches, list them and ask the user which one.
 - If you were invoked with no argument, use the top entry from `REFACTOR_PLAN.md` (phase 1 output) if it exists, and say explicitly that you're using it — don't silently guess if there's no `REFACTOR_PLAN.md` and no argument; ask the user instead.
 - Compute `<component-slug>`: kebab-case of the component's base filename, without extension (e.g. `ReportForm.vue` → `report-form`).
+- If `.claude/chrysalis/module-plan.md` exists, look up this component's current path in its mapping table. If there's a row for it, note the target module path — this component will be physically relocated later by `ch-relocate`, after `ch-verify` passes. If there's no row (or the file doesn't exist), this component just gets refactored in place, same as always.
 
 As soon as the target is confirmed, write `.claude/chrysalis/state.json` (create the file if it doesn't exist, overwrite if it does):
 
@@ -19,6 +20,8 @@ As soon as the target is confirmed, write `.claude/chrysalis/state.json` (create
 {
   "current_component": "<component-slug>",
   "current_component_path": "<path/to/Component.vue>",
+  "target_module_path": "<target path from module-plan.md, or null if none>",
+  "relocated": false,
   "last_phase_completed": 2,
   "updated": "<today's date>"
 }
@@ -57,6 +60,9 @@ Create `.claude/chrysalis/changes/<component-slug>/ANALYSIS.md`, structured as:
 
 ## Public contract (DO NOT change without agreement)
 ...
+
+## Target module (if modularizing)
+<Target path from module-plan.md, or "Not in module-plan.md — stays in place">
 
 ## State dependencies
 ...

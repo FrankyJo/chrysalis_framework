@@ -19,7 +19,7 @@ Automated tests and the visual diff (if there was one) are necessary but not suf
 
 ## Gather everything
 
-From `.claude/chrysalis/changes/<component-slug>/` read: `ANALYSIS.md` (phase 2), `TEST_BASELINE.md` (phase 3), the visual-baseline state (phase 4, including `VISUAL_BASELINE_SKIPPED.md` if present), `CHANGES.md` (phase 5), `VERIFY_REPORT.md` (phase 6).
+From `.claude/chrysalis/changes/<component-slug>/` read: `ANALYSIS.md` (phase 2), `TEST_BASELINE.md` (phase 3), the visual-baseline state (phase 4, including `VISUAL_BASELINE_SKIPPED.md` if present), `CHANGES.md` (phase 5), `VERIFY_REPORT.md` (phase 6), and `RELOCATE_REPORT.md` if it exists (optional relocate phase — only present if this component had a `module-plan.md` target).
 
 ## Build the manual-test checklist
 
@@ -43,6 +43,9 @@ This is the most important part of the report. Prioritize by risk:
 ## Automated verification
 Tests: X/X. Visual diff: [passed / skipped — Playwright not connected].
 
+## Module relocation
+[Omit this section entirely if there's no RELOCATE_REPORT.md. Otherwise: moved from <old path> to <new path>, N import call sites updated, build/typecheck [passed/failed].]
+
 ## ⚠️ What to check manually
 [prioritized checklist]
 
@@ -61,6 +64,9 @@ Unlike `.claude/chrysalis/changes/<component-slug>/` (which stops being used rig
 # <component name> — reference
 
 Last updated: <date>, after a refactor via Chrysalis.
+
+## Location
+[Current path. If relocated, add: "Moved from <old path> as part of modularization on <date>."]
 
 ## Architecture after the refactor
 [composables/hooks/services extracted, how the component interacts with them]

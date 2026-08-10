@@ -53,8 +53,9 @@ PASS / FAIL / WARN + reasoning
 
 ## Stop
 
-State the verdict and the main reason. If PASS or WARN:
+State the verdict and the main reason. If PASS or WARN, check `.claude/chrysalis/state.json`'s `target_module_path` (set by `ch-component-analyzer` from `module-plan.md`, if any):
 
-> "Verification passed [with a warning about the missing visual diff, if applicable]. Ready to put together the final report via `ch-report` whenever you say so — it'll pick up this component automatically."
+- **Has a target module** → "Verification passed [with a warning about the missing visual diff, if applicable]. This component is slated for module `<target>` in `module-plan.md` — ready to relocate it via `ch-relocate` whenever you say so."
+- **No target module** → "Verification passed [with a warning about the missing visual diff, if applicable]. Ready to put together the final report via `ch-report` whenever you say so — it'll pick up this component automatically."
 
-If FAIL — clearly state that the next step is returning to `ch-execute`, and don't suggest moving to phase 7 until it's PASS/WARN.
+If FAIL — clearly state that the next step is returning to `ch-execute`, and don't suggest moving on (to either `ch-relocate` or `ch-report`) until it's PASS/WARN.
