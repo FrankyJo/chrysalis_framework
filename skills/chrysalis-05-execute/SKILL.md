@@ -1,0 +1,41 @@
+---
+name: chrysalis-05-execute
+description: Phase 5 of Chrysalis. Executes the actual refactor of a component's internal structure following framework-specific best practices (Vue composables, React hooks, Angular services), without changing its public API. Use only after chrysalis-04-visual-baseline has completed for the target component (or was explicitly skipped), when the user says "now refactor this component", "let's do the actual changes", or continues Chrysalis pipeline into the execute phase. Do not use this to make arbitrary code changes unrelated to the pipeline — it assumes ANALYSIS.md and a test baseline already exist for the component.
+---
+
+# Phase 5: Execute Refactor
+
+You are executing the FIFTH phase — the actual code refactor. This is the only phase where you actually change the component's files.
+
+## Before you start
+
+Make sure `ANALYSIS.md` (phase 2) and `TEST_BASELINE.md` (phase 3) already exist in `.claude/chrysalis/changes/<component-slug>/`. If they don't — stop and say the earlier phases need to run first; don't refactor a component "blind".
+
+Read the reference matching the framework (determined in phase 1/2):
+- Vue → `references/vue.md`
+- React → `references/react.md`
+- Angular → `references/angular.md`
+
+## Main rule
+
+**The component's public contract (props/emits, props/callbacks, @Input/@Output) does not change**, unless the human explicitly asked for that separately. The refactor is about INTERNAL structure — how the component is built, not how it's interacted with from outside. This is what makes the refactor safe: every place that uses the component keeps working unchanged.
+
+## Steps
+
+1. Make one logical change at a time, in order of increasing risk: first extract business logic into a composable/hook/service (the safest step — purely mechanical code movement), then split the template/JSX into subcomponents (a structural change, higher risk of touching markup).
+2. After each logical step, run the existing tests (from phase 3) as a quick self-check. This isn't the final verification (that's phase 6), just a fast signal for "did I obviously break something".
+3. If a test fails, figure out whether it's a real regression (fix the code) or the test was too tied to the internal implementation rather than to behavior (then fix the test, but note this in the report — the test may have been written the wrong way).
+4. Don't make "while I'm at it" improvements unrelated to the stated refactor goal (renaming variables for no reason, reformatting, updating dependencies) — every extra change makes it harder to diagnose if something goes wrong.
+5. Commit in logical chunks (separate commits for "extracted composable", "split template"), if the project is under git — this makes it easier to roll back a specific step instead of the whole refactor.
+
+## Output
+
+Changed component code (in place, in the normal project structure) + a short `.claude/chrysalis/changes/<component-slug>/CHANGES.md`: what exactly was moved/split, why it was done that way, whether there were any deviations from the plan in `ANALYSIS.md`.
+
+## Stop
+
+Give a summary of the changes and the result of the test run (self-check). Ask for confirmation to continue:
+
+> "The refactor is done, the quick tests pass. Ready for final verification via `chrysalis-06-verify` (full test run + visual diff) whenever you say so."
+
+Do not start the next phase yourself.
