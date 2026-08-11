@@ -1,6 +1,6 @@
 # Angular refactoring patterns
 
-- Extract business logic (API calls, computations, validation) into services (`@Injectable`). The component stays "thin" — it coordinates rather than implements.
+- Extract business logic (API calls, computations, validation) into services (`@Injectable`), placed per the folder convention in the main `ch-execute` SKILL.md (a `<component-slug>` subfolder or the project's existing per-feature module layout, not one flat shared `services/` directory). The component stays "thin" — it coordinates rather than implements.
 - If there's repeated template logic, extract standalone components or directives along natural boundaries.
 - Only consider moving to Signals instead of RxJS patterns if that's separately agreed on — don't mix a reactive-model change with a structural refactor in one step.
 - Follow smart/dumb (container/presentational) component separation: the container knows about services and state, the presentational component gets everything via @Input/@Output.

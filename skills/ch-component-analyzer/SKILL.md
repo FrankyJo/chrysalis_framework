@@ -77,13 +77,13 @@ Yes / no, what's covered, gaps.
 ...
 
 ## Recommended refactoring approach
-Briefly: which pieces of logic to extract into composables/hooks/services first, whether the template can be split into subcomponents, whether there are natural split boundaries.
+At least two candidate ways to split this component's logic (not just the one you'd pick), each as: what goes where, and its main tradeoff. Then state which one you recommend and why. If there's really only one sane split, say so explicitly rather than padding — but for anything with more than one plausible boundary (which is most bloated components), show the alternative you didn't pick.
 ```
 
 ## Stop
 
-Give a short summary (the riskiest areas, the main recommendation) and ask for confirmation to continue:
+Give a short summary (the riskiest areas, the main recommendation) and — separately from the general "ready to continue" — call out the split boundary specifically, since that's a decision `ch-execute` will treat as settled once you confirm:
 
-> "Ready to write characterization tests for `<component-slug>` via `ch-test-baseline` whenever you say so — it'll pick up this component automatically."
+> "Ready to write characterization tests for `<component-slug>` via `ch-test-baseline` whenever you say so — it'll pick up this component automatically. One thing to confirm before `ch-execute` acts on it: I'm planning to split this into [X] and [Y] (see 'Recommended refactoring approach' in ANALYSIS.md for the alternative I considered) — does that boundary make sense, or would you rather draw it differently?"
 
-Do not start the next phase yourself.
+Do not start the next phase yourself. If the human proposes a different boundary, update `ANALYSIS.md`'s "Recommended refactoring approach" before moving on.
